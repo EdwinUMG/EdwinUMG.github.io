@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="dist/sql-wasm.js"></script>
+    <title>Home</title>
+  </head>
+  <body>
+    <header class="bg-teal-700 shadow-md text-white">
+      <div
+        class="container mx-auto px-6 py-4 flex-column md:flex justify-between items-center"
+      >
+        <a href="#" class="text-2xl font-bold">Alamedas de Santa Ana</a>
+        <nav class="flex-column md:flex space-x-6">
+          <a href="index.html" class="hover:scale-110 transition">Inicio</a>
+          <a href="#" class="hover:scale-110 transition">Calendario</a>
+          <a href="pagina3.html" class="hover:scale-110 transition">Pagos</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="bg-gray-50 py-12">
+      <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold text-teal-700 mb-6 text-center">
+          Calendario de Eventos
+        </h2>
+
+        <div class="flex justify-center items-center space-x-4 mb-6">
+          <select
+            class="px-3 py-2 border border-black-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white text-gray-700 text-sm cursor-pointer"
+            id="monthSelect"
+          ></select>
+          <select
+            class="px-3 py-2 border border-black-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white text-gray-700 text-sm cursor-pointer"
+            id="yearSelect"
+          ></select>
+        </div>
+
+        <div
+          class="grid grid-cols-7 gap-2 text-center font-semibold text-gray-600 mb-2"
+        >
+          <div>Dom</div>
+          <div>Lun</div>
+          <div>Mar</div>
+          <div>Mié</div>
+          <div>Jue</div>
+          <div>Vie</div>
+          <div>Sáb</div>
+        </div>
+
+        <div id="calendar" class="grid grid-cols-7 gap-2 text-sm"></div>
+      </div>
+
+      <div
+        id="eventModal"
+        class="hidden fixed inset-0 backdrop-blur-xs bg-black/50 flex items-center justify-center z-50"
+      >
+        <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+          <h3 id="modalTitle" class="text-xl font-bold text-gray-800 mb-2"></h3>
+          <p id="modalDesc" class="text-gray-600 mb-4"></p>
+          <p class="text-sm text-gray-500">
+            Fecha: <span id="modalDate"></span>
+          </p>
+          <div class="mt-6 text-right">
+            <button
+              id="closeModal"
+              class="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="js/dbCalendar.js"></script>
+  </body>
+</html>
