@@ -1,226 +1,351 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="dist/sql-wasm.js"></script>
-    <script src="js/dbNews.js"></script>
-    <title>Home</title>
-  </head>
-  <body>
-    <header class="bg-teal-700 shadow-md text-white">
-      <div
-        class="container mx-auto px-6 py-4 flex-column md:flex justify-between items-center"
-      >
-        <a href="#" class="text-2xl font-bold">Alamedas de Santa Ana</a>
-        <nav class="flex-column md:flex space-x-6">
-          <a href="#" class="hover:scale-110 transition">Inicio</a>
-          <a href="pagina2.html" class="hover:scale-110 transition">Calendario</a>
-          <a href="pagina3.html" class="hover:scale-110 transition">Pagos</a>
-        </nav>
+<html lang="es" data-theme="halloween">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador de Confinamiento RF en Centros Penitenciarios</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            base: {
+              100: 'var(--color-base-100)',
+              200: 'var(--color-base-200)',
+              300: 'var(--color-base-300)',
+              content: 'var(--color-base-content)'
+            },
+            primary: {
+              DEFAULT: 'var(--color-primary)',
+              content: 'var(--color-primary-content)'
+            },
+            secondary: {
+              DEFAULT: 'var(--color-secondary)',
+              content: 'var(--color-secondary-content)'
+            },
+            accent: {
+              DEFAULT: 'var(--color-accent)',
+              content: 'var(--color-accent-content)'
+            },
+            neutral: {
+              DEFAULT: 'var(--color-neutral)',
+              content: 'var(--color-neutral-content)'
+            },
+            info: {
+              DEFAULT: 'var(--color-info)',
+              content: 'var(--color-info-content)'
+            },
+            success: {
+              DEFAULT: 'var(--color-success)',
+              content: 'var(--color-success-content)'
+            },
+            warning: {
+              DEFAULT: 'var(--color-warning)',
+              content: 'var(--color-warning-content)'
+            },
+            error: {
+              DEFAULT: 'var(--color-error)',
+              content: 'var(--color-error-content)'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* DEFINICIÓN EXACTA DE TEMAS DAISYUI EN OKLCH */
+    :root, [data-theme="emerald"] {
+      --color-base-100: oklch(100% 0 0);
+      --color-base-200: oklch(93% 0 0);
+      --color-base-300: oklch(86% 0 0);
+      --color-base-content: oklch(35.519% 0.032 262.988);
+      --color-primary: oklch(76.662% 0.135 153.45);
+      --color-primary-content: oklch(33.387% 0.04 162.24);
+      --color-secondary: oklch(61.302% 0.202 261.294);
+      --color-secondary-content: oklch(100% 0 0);
+      --color-accent: oklch(72.772% 0.149 33.2);
+      --color-accent-content: oklch(0% 0 0);
+      --color-neutral: oklch(35.519% 0.032 262.988);
+      --color-neutral-content: oklch(98.462% 0.001 247.838);
+      --color-info: oklch(72.06% 0.191 231.6);
+      --color-info-content: oklch(0% 0 0);
+      --color-success: oklch(64.8% 0.15 160);
+      --color-success-content: oklch(0% 0 0);
+      --color-warning: oklch(84.71% 0.199 83.87);
+      --color-warning-content: oklch(0% 0 0);
+      --color-error: oklch(71.76% 0.221 22.18);
+      --color-error-content: oklch(0% 0 0);
+    }
+
+    [data-theme="halloween"] {
+      --color-base-100: oklch(21% 0.006 56.043);
+      --color-base-200: oklch(14% 0.004 49.25);
+      --color-base-300: oklch(0% 0 0);
+      --color-base-content: oklch(84.955% 0 0);
+      --color-primary: oklch(77.48% 0.204 60.62);
+      --color-primary-content: oklch(19.693% 0.004 196.779);
+      --color-secondary: oklch(45.98% 0.248 305.03);
+      --color-secondary-content: oklch(89.196% 0.049 305.03);
+      --color-accent: oklch(64.8% 0.223 136.073);
+      --color-accent-content: oklch(0% 0 0);
+      --color-neutral: oklch(24.371% 0.046 65.681);
+      --color-neutral-content: oklch(84.874% 0.009 65.681);
+      --color-info: oklch(54.615% 0.215 262.88);
+      --color-info-content: oklch(90.923% 0.043 262.88);
+      --color-success: oklch(62.705% 0.169 149.213);
+      --color-success-content: oklch(12.541% 0.033 149.213);
+      --color-warning: oklch(66.584% 0.157 58.318);
+      --color-warning-content: oklch(13.316% 0.031 58.318);
+      --color-error: oklch(65.72% 0.199 27.33);
+      --color-error-content: oklch(13.144% 0.039 27.33);
+    }
+
+    canvas { touch-action: none; }
+    .signal-bar { transition: height 0.2s ease, background-color 0.2s ease; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--color-base-300); border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-base-200 text-base-content h-screen w-screen font-sans antialiased overflow-hidden flex flex-col transition-colors duration-200">
+  
+  <!-- BARRA SUPERIOR -->
+  <header class="h-14 border-b border-base-300 bg-base-100/90 backdrop-blur-md px-4 lg:px-6 flex items-center justify-between shrink-0 z-30 transition-colors duration-200">
+    <div>
+      <h1 class="text-sm lg:text-base font-bold tracking-wide text-primary leading-tight">Confinamiento RF Penitenciario</h1>
+      <p class="text-[10px] opacity-70">Modelo Matemático de Atenuación Pasiva y Balance de Enlace</p>
+    </div>
+    
+    <div class="flex items-center gap-2 sm:gap-3">
+      <div class="hidden sm:flex items-center gap-2">
+        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-success/15 text-success border border-success/30">Control 100% Pasivo</span>
+        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-error/15 text-error border border-error/30">Corte: -95 dBm</span>
       </div>
-    </header>
 
-    <section class="bg-white py-12 flex justify-center">
-      <div
-        class="container max-w-3/4 px-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-center"
-      >
-        <!-- Imagen -->
-        <div class="flex justify-center">
-          <img
-            src="https://casagt.org/wp-content/uploads/2024/07/Condominio-Albarela.jpg"
-            alt="Vista del condominio"
-            class="rounded-2xl shadow-lg w-full"
-          />
+      <!-- BOTÓN TOGGLE DE ANIMACIÓN -->
+      <button id="btnToggleAnimation" class="flex items-center gap-2 text-xs font-semibold px-2.5 py-1.5 rounded-md bg-base-200 hover:bg-base-300 border border-base-300 text-base-content transition">
+        <span id="animIndicatorDot" class="w-2 h-2 rounded-full bg-primary shadow-sm"></span>
+        <span id="animToggleLabel">Animación: ON</span>
+      </button>
+
+      <!-- BOTÓN TOGGLE DE TEMA (EMERALD / HALLOWEEN) -->
+      <button id="btnToggleTheme" class="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-md bg-base-200 hover:bg-base-300 border border-base-300 text-base-content transition" title="Alternar tema">
+        <span id="themeIcon" class="text-xs">🎃</span>
+        <span id="themeLabel" class="hidden sm:inline">Halloween</span>
+      </button>
+      
+      <!-- BOTÓN TOGGLE SIDEBAR -->
+      <button id="btnToggleSidebar" class="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-md bg-primary text-primary-content hover:opacity-90 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <span>Parámetros</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ÁREA DE TRABAJO -->
+  <div class="flex-1 flex overflow-hidden relative">
+    
+    <!-- ESCENARIO CENTRAL -->
+    <main class="flex-1 flex items-center justify-center p-3 lg:p-6 overflow-hidden bg-base-200/50 transition-colors duration-200">
+      <div class="flex items-stretch gap-3 w-full max-w-6xl h-full max-h-[calc(100vh-4.5rem)] justify-center">
+        
+        <!-- TELEMETRÍA VERTICAL (LADO IZQUIERDO) -->
+        <div class="w-28 sm:w-36 md:w-44 shrink-0 flex flex-col justify-around py-4 px-3 bg-base-100/90 backdrop-blur-md rounded-2xl border border-base-300 text-xs shadow-xl transition-colors duration-200">
+          <div class="space-y-1">
+            <span class="block text-[9px] uppercase tracking-widest opacity-60 font-mono font-bold">Distancia (d)</span>
+            <div id="telemetryDistance" class="text-sm md:text-base font-mono font-bold text-primary">0.00 km</div>
+          </div>
+          
+          <div class="space-y-1">
+            <span class="block text-[9px] uppercase tracking-widest opacity-60 font-mono font-bold">Longitud (&lambda;)</span>
+            <div id="telemetryLambda" class="text-sm md:text-base font-mono font-bold text-primary">0.00 cm</div>
+          </div>
+          
+          <div class="space-y-1">
+            <span class="block text-[9px] uppercase tracking-widest opacity-60 font-mono font-bold">Pérdida Aire</span>
+            <div id="telemetryFSPL" class="text-sm md:text-base font-mono font-bold text-base-content">0.00 dB</div>
+            <span class="text-[9px] opacity-50 block">FSPL</span>
+          </div>
+          
+          <div class="space-y-1">
+            <span class="block text-[9px] uppercase tracking-widest opacity-60 font-mono font-bold">Atenuación Muro</span>
+            <div id="telemetryWallLoss" class="text-sm md:text-base font-mono font-bold text-error">0.00 dB</div>
+            <span class="text-[9px] opacity-50 block">L_mat</span>
+          </div>
+
+          <div class="space-y-1 pt-2 border-t border-base-300">
+            <span class="block text-[9px] uppercase tracking-widest opacity-60 font-mono font-bold">Espesor Total</span>
+            <div id="totalThicknessLabel" class="text-xs md:text-sm font-mono font-semibold text-base-content">0.0 cm</div>
+          </div>
         </div>
 
-        <!-- Descripción -->
-        <div>
-          <h2 class="text-3xl font-bold text-teal-700 mb-4">
-            Bienvenido a Alamedas de Santa Ana
-          </h2>
-          <p class="text-gray-700 leading-relaxed mb-4 text-justify">
-            Nuestro condominio combina confort, seguridad y espacios verdes
-            diseñados para brindar una vida tranquila y armoniosa. Cada detalle
-            ha sido pensado para ofrecer un entorno moderno, seguro y agradable
-            para las familias.
-          </p>
-          <p class="text-gray-700 leading-relaxed text-justify">
-            Disfruta de áreas comunes, estacionamiento privado, acceso
-            controlado y la mejor ubicación, todo en un solo lugar pensado para
-            ti.
-          </p>
-        </div>
-      </div>
-    </section>
-    <section class="bg-white py-12 flex justify-center">
-      <div
-        class="container max-w-3/4 mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-center"
-      >
-        <!-- Descripción -->
-        <div>
-          <h2 class="text-3xl font-bold text-teal-700 mb-4">
-            Nuestra Ubicación
-          </h2>
-          <p class="text-gray-700 leading-relaxed mb-4">
-            El condominio se encuentra estratégicamente ubicado en una zona
-            tranquila y de fácil acceso, rodeado de áreas verdes y cercano a
-            centros comerciales, colegios y servicios esenciales.
-          </p>
-          <p class="text-gray-700 leading-relaxed">
-            Gracias a su ubicación privilegiada, disfrutarás de la comodidad de
-            tener todo lo que necesitas a pocos minutos, sin perder la calma y
-            seguridad de un entorno residencial.
-          </p>
-        </div>
+        <!-- CUADRO DE SIMULACIÓN 2D -->
+        <div class="relative flex-1 aspect-[4/3] max-w-full max-h-full bg-base-100 rounded-2xl border border-base-300 shadow-2xl overflow-hidden flex items-center justify-center transition-colors duration-200">
+          
+          <div class="absolute top-3 left-10 z-10 pointer-events-none">
+            <span class="font-mono text-[10px] tracking-wider uppercase opacity-60 font-bold">Plano Penitenciario 2D</span>
+            <span id="terrainScaleIndicator" class="block text-[9px] font-mono text-primary">1.40 km × 1.05 km</span>
+          </div>
 
-        <div class="rounded-2xl overflow-hidden shadow-lg">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d787.0164395095225!2d-90.41629460267393!3d14.5526879935762!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2sgt!4v1693176000000!5m2!1ses-419!2sgt"
-            width="100%"
-            height="350"
-            style="border: 0"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-          >
-          </iframe>
-        </div>
-      </div>
-    </section>
+          <canvas id="simCanvas" width="800" height="600" class="w-full h-full block cursor-crosshair"></canvas>
 
-    <section class="bg-white py-12 flex justify-center">
-      <div class="container max-w-3/4 px-6">
-        <h2 class="text-3xl font-bold text-teal-700 mb-6 text-center">
-          Galería
-        </h2>
-
-        <div
-          class="relative w-full mx-auto overflow-hidden rounded-2xl shadow-lg"
-        >
-          <!-- Slides -->
-          <div class="flex transition-transform duration-700" id="carousel">
-            <!-- Foto 1 -->
-            <div class="min-w-full">
-              <img
-                src="https://www.bloque.gt/cdn/shop/files/Imagen-_749x500px_600x.png?v=1689975317"
-                class="w-full h-96 object-cover"
-                alt="Foto 1"
-              />
+          <!-- SEÑAL DEL DISPOSITIVO (ESQUINA SUPERIOR DERECHA) -->
+          <div class="absolute top-3 right-3 bg-base-100/90 backdrop-blur-md border border-base-300 p-2.5 sm:p-3 rounded-xl shadow-2xl flex items-center gap-3 z-10 transition-colors duration-200">
+            <div>
+              <div class="text-[9px] opacity-60 uppercase tracking-wider font-bold">Móvil (Rx)</div>
+              <div id="phoneStatus" class="text-xs font-semibold text-success">Conectado</div>
+              <div id="phonePrx" class="text-xs font-mono text-base-content">-50.00 dBm</div>
             </div>
-
-            <!-- Foto 2 -->
-            <div class="min-w-full">
-              <img
-                src="https://gt.micasamicarro.com/storage/products/u2_f90152688e11c79111b16c9d05ef1d90.jpg"
-                class="w-full h-96 object-cover"
-                alt="Foto 2"
-              />
-            </div>
-
-            <!-- Foto 3 -->
-            <div class="min-w-full">
-              <img
-                src="https://casagt.org/wp-content/uploads/2024/07/Condominio-Albarela.jpg"
-                class="w-full h-96 object-cover"
-                alt="Foto 3"
-              />
-            </div>
-
-            <!-- Foto 4 -->
-            <div class="min-w-full">
-              <img
-                src="https://www.bloque.gt/cdn/shop/files/6-Imagen-_1200x800px_e32cee46-1e79-4edc-84c8-9dab6f8bf0d5_1024x1024.jpg?v=1690321658"
-                class="w-full h-96 object-cover"
-                alt="Foto 4"
-              />
-            </div>
-
-            <!-- Video -->
-            <div class="min-w-full">
-              <video controls class="w-full h-80 object-cover">
-                <source
-                  src="dist/video.mp4"
-                  type="video/mp4"
-                />
-                Tu navegador no soporta videos HTML5.
-              </video>
+            
+            <div class="flex items-end gap-1 h-6 bg-base-200 p-1 rounded border border-base-300" id="signalBarContainer">
+              <div class="w-1 bg-base-300 rounded-sm signal-bar" style="height: 25%;"></div>
+              <div class="w-1 bg-base-300 rounded-sm signal-bar" style="height: 50%;"></div>
+              <div class="w-1 bg-base-300 rounded-sm signal-bar" style="height: 75%;"></div>
+              <div class="w-1 bg-base-300 rounded-sm signal-bar" style="height: 100%;"></div>
             </div>
           </div>
 
-          <!-- Botón previo -->
-          <button
-            onclick="moveSlide(-1)"
-            class="absolute top-1/2 left-3 -translate-y-1/2 bg-teal-600 text-white p-2 rounded-full shadow hover:bg-teal-700"
-          >
-            &#10094;
-          </button>
+        </div>
 
-          <!-- Botón siguiente -->
-          <button
-            onclick="moveSlide(1)"
-            class="absolute top-1/2 right-3 -translate-y-1/2 bg-teal-600 text-white p-2 rounded-full shadow hover:bg-teal-700"
-          >
-            &#10095;
-          </button>
+      </div>
+    </main>
 
-          <!-- Indicadores -->
-          <div
-            class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2"
-            id="indicators"
-          >
-            <span
-              class="w-3 h-3 bg-teal-600 rounded-full cursor-pointer"
-              onclick="goToSlide(0)"
-            ></span>
-            <span
-              class="w-3 h-3 bg-gray-400 rounded-full cursor-pointer"
-              onclick="goToSlide(1)"
-            ></span>
-            <span
-              class="w-3 h-3 bg-gray-400 rounded-full cursor-pointer"
-              onclick="goToSlide(2)"
-            ></span>
-            <span
-              class="w-3 h-3 bg-gray-400 rounded-full cursor-pointer"
-              onclick="goToSlide(3)"
-            ></span>
-            <span
-              class="w-3 h-3 bg-gray-400 rounded-full cursor-pointer"
-              onclick="goToSlide(4)"
-            ></span>
+    <!-- SIDEBAR COLAPSABLE -->
+    <aside id="sidebar" class="w-80 md:w-96 border-l border-base-300 bg-base-100/95 backdrop-blur-lg flex flex-col transition-all duration-300 ease-in-out shrink-0 overflow-y-auto">
+      <div class="p-6 space-y-8">
+        
+        <!-- 01. Dimensión del Terreno (Eje X en km) -->
+        <div class="space-y-3">
+          <div>
+            <span class="text-[10px] font-mono uppercase tracking-widest text-primary font-bold">01. Escala del Terreno</span>
+            <p class="text-xs opacity-70 mt-0.5">Define el ancho real del eje X en kilómetros (km)</p>
+          </div>
+
+          <div class="space-y-3 pt-1">
+            <div class="space-y-1">
+              <div class="flex justify-between text-[11px] opacity-80">
+                <span>Ancho Eje X (km)</span>
+                <span id="terrainXDisplay" class="font-mono text-primary font-semibold">1.40 km</span>
+              </div>
+              <input type="number" id="terrainXInput" value="1.4" min="0.1" max="25" step="0.1" class="w-full bg-base-200 border border-base-300 rounded px-2.5 py-1.5 text-xs text-base-content focus:border-primary outline-none font-mono transition" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-[10px] font-mono bg-base-200 p-2.5 rounded border border-base-300">
+              <div>
+                <span class="opacity-60 block">Eje Y (Calculado):</span>
+                <span id="terrainYDisplay" class="font-bold text-base-content">1.05 km</span>
+              </div>
+              <div>
+                <span class="opacity-60 block">Área Terrestre:</span>
+                <span id="terrainAreaDisplay" class="font-bold text-base-content">1.47 km²</span>
+              </div>
+              <div class="col-span-2 pt-1 border-t border-base-300/60 opacity-80">
+                Resolución: <span id="terrainResolutionDisplay" class="text-primary font-semibold">1.75 m/px</span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
 
-    <section class="bg-gray-50 py-12 flex justify-center">
-      <div class="container max-w-3/4 mx-auto px-6">
-        <h2 class="text-3xl font-bold text-teal-700 mb-8 text-center">
-          Noticias
-        </h2>
+        <!-- 02. Transmisión -->
+        <div class="space-y-3">
+          <div>
+            <span class="text-[10px] font-mono uppercase tracking-widest text-primary font-bold">02. Transmisión</span>
+            <p class="text-xs opacity-70 mt-0.5">Parámetros de la torre externa</p>
+          </div>
 
-        <div class="grid gap-8 md:grid-cols-3" id="contenedorNoticias"></div>
-      </div>
-    </section>
+          <div class="space-y-3 pt-1">
+            <div class="space-y-1">
+              <label class="text-[11px] opacity-80 font-medium">Tecnología Espectral</label>
+              <select id="techPreset" class="w-full bg-base-200 border border-base-300 rounded px-2.5 py-1.5 text-xs text-base-content focus:border-primary outline-none transition">
+                <option value="850">2G GSM (850 MHz)</option>
+                <option value="1900">3G UMTS (1900 MHz)</option>
+                <option value="2100" selected>4G LTE (2100 MHz)</option>
+                <option value="3500">5G Sub-6 (3500 MHz)</option>
+                <option value="28000">5G mmWave (28000 MHz)</option>
+              </select>
+            </div>
 
-    <footer class="bg-teal-700 text-white py-6">
-      <div
-        class="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between"
-      >
-        <!-- Logo / Nombre -->
-        <div class="mb-4 md:mb-0">
-          <h3 class="text-xl font-bold">Alamedas de Santa Ana</h3>
-          <p class="text-sm text-teal-100">Tu espacio, tu hogar</p>
+            <div class="space-y-1">
+              <label class="text-[11px] opacity-80 font-medium">Potencia EIRP (dBm)</label>
+              <input type="number" id="txPower" value="43" min="10" max="60" class="w-full bg-base-200 border border-base-300 rounded px-2.5 py-1.5 text-xs text-base-content focus:border-primary outline-none transition font-mono" />
+            </div>
+
+            <div class="space-y-1 pt-1">
+              <div class="flex justify-between text-[11px] opacity-80">
+                <span>Frecuencia Operativa</span>
+                <span id="freqLabel" class="font-mono text-primary font-semibold">2100 MHz</span>
+              </div>
+              <input type="range" id="freqSlider" min="700" max="30000" step="50" value="2100" class="w-full accent-primary cursor-pointer" />
+            </div>
+          </div>
         </div>
 
-        <!-- Copyright -->
-        <div class="text-sm text-teal-100">
-          © 2025 Alamedas de Santa Ana. Todos los derechos reservados.
+        <!-- 03. Blindaje Multicapa (cm) -->
+        <div class="space-y-3">
+          <div class="flex justify-between items-end">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-widest text-error font-bold">03. Blindaje del Muro</span>
+              <p class="text-xs opacity-70 mt-0.5">Espesores en centímetros (cm)</p>
+            </div>
+            <button id="btnAddLayer" class="text-[11px] text-primary hover:underline font-semibold transition pb-0.5">+ Capa</button>
+          </div>
+
+          <div id="layersContainer" class="space-y-2 pt-1"></div>
         </div>
+
+        <!-- 04. Catálogo de Materiales -->
+        <div class="space-y-3 pb-4">
+          <div class="flex justify-between items-end">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-widest text-secondary font-bold">04. Coeficientes (&alpha;)</span>
+              <p class="text-xs opacity-70 mt-0.5">Pérdida en dB/m</p>
+            </div>
+            <button id="toggleMaterialForm" class="text-[11px] opacity-80 hover:opacity-100 transition pb-0.5">Registrar</button>
+          </div>
+
+          <form id="newMaterialForm" class="hidden bg-base-200 p-3 rounded-lg space-y-2.5 border border-base-300">
+            <div class="space-y-1">
+              <label class="text-[10px] opacity-70">Nombre del Material</label>
+              <input type="text" id="matName" placeholder="Ej: Concreto con Viruta" required class="w-full bg-base-100 border border-base-300 rounded px-2 py-1 text-xs text-base-content outline-none focus:border-primary" />
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="space-y-1">
+                <label class="text-[10px] opacity-70">&alpha; Base (dB/m)</label>
+                <input type="number" id="matAlpha" placeholder="12" step="0.5" required class="w-full bg-base-100 border border-base-300 rounded px-2 py-1 text-xs text-base-content outline-none focus:border-primary" />
+              </div>
+              <div class="space-y-1">
+                <label class="text-[10px] opacity-70">Exponente &gamma;</label>
+                <input type="number" id="matGamma" value="0.4" step="0.1" class="w-full bg-base-100 border border-base-300 rounded px-2 py-1 text-xs text-base-content outline-none focus:border-primary" />
+              </div>
+            </div>
+            <button type="submit" class="w-full bg-primary text-primary-content text-[11px] py-1.5 rounded font-semibold transition hover:opacity-90">Guardar</button>
+          </form>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="text-[10px] opacity-60 uppercase font-mono border-b border-base-300">
+                  <th class="py-1.5 pr-2">Material</th>
+                  <th class="py-1.5 px-2">Base</th>
+                  <th class="py-1.5 pl-2 text-right">Actual</th>
+                </tr>
+              </thead>
+              <tbody id="materialsTableBody" class="divide-y border-base-300/50 font-mono text-base-content"></tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
-      <script src="js/carrusel.js"></script>
-    </footer>
-  </body>
+    </aside>
+
+  </div>
+
+  <script src="rf-engine.js"></script>
+  <script src="app.js"></script>
+</body>
 </html>
