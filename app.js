@@ -668,19 +668,21 @@ const ViewController = {
 
     for (let mId in materials) {
       const mat = materials[mId];
+      let baseText = "";
       let attenuationText = "";
 
       if (mat.isSolidMetal) {
         baseText = "Metal";
         attenuationText = `${(mat.fixedShieldingDb ?? 120.0).toFixed(1)} dB (Total)`;
-      }
-      else if (mat.isMesh) {
+      } else if (mat.isMesh) {
+        baseText = "Malla";
         const se = RFEngine.calcMeshShielding(
           (mat.defaultApertureMm ?? 5) / 1000.0,
           AppState.freqMHz,
         );
         attenuationText = `${se.toFixed(1)} dB (SE)`;
       } else {
+        baseText = `a=${mat.a}`;
         const alpha = RFEngine.calcUITRAlpha(mat, AppState.freqMHz);
         attenuationText = `${alpha.toFixed(1)} dB/m`;
       }
@@ -689,10 +691,10 @@ const ViewController = {
       tr.className =
         "hover:bg-platinum-200/50 dark:hover:bg-shadow-grey-800/40";
       tr.innerHTML = `
-      <td class="py-1.5 pr-2 font-sans text-shadow-grey-800 dark:text-platinum-200">${mat.name}</td>
-      <td class="py-1.5 px-2 text-shadow-grey-500 dark:text-platinum-400 font-mono">${mat.isMesh ? "Malla" : `a=${mat.a}`}</td>
-      <td class="py-1.5 pl-2 text-right text-raspberry-plum-600 dark:text-cerulean-400 font-semibold font-mono">${attenuationText}</td>
-    `;
+        <td class="py-1.5 pr-2 font-sans text-shadow-grey-800 dark:text-platinum-200">${mat.name}</td>
+        <td class="py-1.5 px-2 text-shadow-grey-500 dark:text-platinum-400 font-mono">${baseText}</td>
+        <td class="py-1.5 pl-2 text-right text-raspberry-plum-600 dark:text-cerulean-400 font-semibold font-mono">${attenuationText}</td>
+      `;
       tbody.appendChild(tr);
     }
   },
