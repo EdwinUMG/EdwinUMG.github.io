@@ -670,7 +670,11 @@ const ViewController = {
       const mat = materials[mId];
       let attenuationText = "";
 
-      if (mat.isMesh) {
+      if (mat.isSolidMetal) {
+        baseText = "Metal";
+        attenuationText = `${(mat.fixedShieldingDb ?? 120.0).toFixed(1)} dB (Total)`;
+      }
+      else if (mat.isMesh) {
         const se = RFEngine.calcMeshShielding(
           (mat.defaultApertureMm ?? 5) / 1000.0,
           AppState.freqMHz,

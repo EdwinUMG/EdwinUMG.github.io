@@ -53,7 +53,7 @@ const RFEngine = {
    * @returns {number} Coeficiente de atenuación específica α (dB/m)
    */
   calcUITRAlpha(mat, freqMHz) {
-    if (!mat || mat.isMesh) return 0;
+    if (!mat || mat.isMesh || mat.isSolidMetal) return 0;
 
     const freqGHz = freqMHz / 1000.0;
     const freqHz = freqMHz * 1e6;
@@ -167,7 +167,10 @@ const RFEngine = {
       const mat = catalog[layer.materialId];
       if (!mat) return acc;
 
-      if (mat.isMesh) {
+      if (mat.isSolidMetal) {
+        // Blindaje continuo por reflexión y desacoplamiento de impedancia
+        return acc + (mat.fixedShieldingDb ?? 120.0);
+      } else if (mat.isMesh){
         // Blindaje por apertura finita
         const apertureMeters = (layer.apertureMm ?? mat.defaultApertureMm ?? 5.0) / 1000.0;
         return acc + this.calcMeshShielding(apertureMeters, freqMHz);
